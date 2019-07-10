@@ -1,0 +1,180 @@
+0 GREEDY: 	[0. 0. 0. 0. 0. 0.]store red
+0 VAL ITER: 	[0. 0. 0. 0. 0. 0.]store red
+
+1 GREEDY: 	[1. 0. 0. 0. 0. 0.]store blue
+1 VAL ITER: 	[0. 0. 1. 0. 0. 0.]store blue
+
+2 GREEDY: 	[1. 3. 0. 0. 0. 0.]store white
+2 VAL ITER: 	[3. 0. 1. 0. 0. 0.]store white
+
+3 GREEDY: 	[1. 3. 2. 0. 0. 0.]restore blue
+3 VAL ITER: 	[3. 2. 1. 0. 0. 0.]restore blue
+
+4 GREEDY: 	[1. 0. 2. 0. 0. 0.]restore white
+4 VAL ITER: 	[0. 2. 1. 0. 0. 0.]restore white
+
+5 GREEDY: 	[1. 0. 0. 0. 0. 0.]store white
+5 VAL ITER: 	[0. 0. 1. 0. 0. 0.]store white
+
+6 GREEDY: 	[1. 2. 0. 0. 0. 0.]store red
+6 VAL ITER: 	[2. 0. 1. 0. 0. 0.]store red
+
+7 GREEDY: 	[1. 2. 1. 0. 0. 0.]store white
+7 VAL ITER: 	[2. 0. 1. 1. 0. 0.]store white
+
+8 GREEDY: 	[1. 2. 1. 2. 0. 0.]store red
+8 VAL ITER: 	[2. 0. 1. 1. 2. 0.]store red
+
+9 GREEDY: 	[1. 2. 1. 2. 1. 0.]restore red
+9 VAL ITER: 	[2. 0. 1. 1. 2. 1.]restore red
+
+10 GREEDY: 	[0. 2. 1. 2. 1. 0.]restore red
+10 VAL ITER: 	[2. 0. 0. 1. 2. 1.]restore red
+
+11 GREEDY: 	[0. 2. 0. 2. 1. 0.]store white
+11 VAL ITER: 	[2. 0. 0. 1. 2. 0.]store white
+
+12 GREEDY: 	[2. 2. 0. 2. 1. 0.]store blue
+12 VAL ITER: 	[2. 0. 2. 1. 2. 0.]store blue
+
+13 GREEDY: 	[2. 2. 3. 2. 1. 0.]store white
+13 VAL ITER: 	[2. 3. 2. 1. 2. 0.]store white
+
+14 GREEDY: 	[2. 2. 3. 2. 1. 2.]restore red
+14 VAL ITER: 	[2. 3. 2. 1. 2. 0.]restore red
+
+15 GREEDY: 	[2. 2. 3. 2. 0. 2.]restore white
+15 VAL ITER: 	[2. 3. 2. 0. 2. 0.]restore white
+
+16 GREEDY: 	[0. 2. 3. 2. 0. 2.]restore white
+16 VAL ITER: 	[0. 3. 2. 0. 2. 0.]restore white
+
+17 GREEDY: 	[0. 0. 3. 2. 0. 2.]store red
+17 VAL ITER: 	[0. 3. 0. 0. 2. 0.]store red
+
+18 GREEDY: 	[1. 0. 3. 2. 0. 2.]store blue
+18 VAL ITER: 	[1. 3. 0. 0. 2. 0.]store blue
+
+19 GREEDY: 	[1. 3. 3. 2. 0. 2.]restore red
+19 VAL ITER: 	[1. 3. 0. 3. 2. 0.]restore red
+
+20 GREEDY: 	[0. 3. 3. 2. 0. 2.]store blue
+20 VAL ITER: 	[0. 3. 0. 3. 2. 0.]store blue
+
+21 GREEDY: 	[3. 3. 3. 2. 0. 2.]store white
+21 VAL ITER: 	[3. 3. 0. 3. 2. 0.]store white
+
+22 GREEDY: 	[3. 3. 3. 2. 2. 2.]restore white
+22 VAL ITER: 	[3. 3. 2. 3. 2. 0.]restore white
+
+23 GREEDY: 	[3. 3. 3. 0. 2. 2.]restore blue
+23 VAL ITER: 	[3. 3. 0. 3. 2. 0.]restore blue
+
+24 GREEDY: 	[0. 3. 3. 0. 2. 2.]restore white
+24 VAL ITER: 	[0. 3. 0. 3. 2. 0.]restore white
+
+25 GREEDY: 	[0. 3. 3. 0. 0. 2.]restore white
+25 VAL ITER: 	[0. 3. 0. 3. 0. 0.]restore white
+
+26 GREEDY: 	[0. 3. 3. 0. 0. 0.]restore blue
+26 VAL ITER: 	[0. 3. 0. 3. 0. 0.]restore blue
+
+27 GREEDY: 	[0. 0. 3. 0. 0. 0.]restore blue
+27 VAL ITER: 	[0. 0. 0. 3. 0. 0.]restore blue
+
+28 GREEDY: 	[0. 0. 0. 0. 0. 0.]store red
+28 VAL ITER: 	[0. 0. 0. 0. 0. 0.]store red
+
+29 GREEDY: 	[1. 0. 0. 0. 0. 0.]restore red
+29 VAL ITER: 	[0. 0. 1. 0. 0. 0.]restore red
+
+30 GREEDY: 	[0. 0. 0. 0. 0. 0.]store red
+30 VAL ITER: 	[0. 0. 0. 0. 0. 0.]store red
+
+31 GREEDY: 	[1. 0. 0. 0. 0. 0.]store white
+31 VAL ITER: 	[0. 0. 1. 0. 0. 0.]store white
+
+32 GREEDY: 	[1. 2. 0. 0. 0. 0.]store red
+32 VAL ITER: 	[2. 0. 1. 0. 0. 0.]store red
+
+33 GREEDY: 	[1. 2. 1. 0. 0. 0.]store red
+33 VAL ITER: 	[2. 0. 1. 1. 0. 0.]store red
+
+34 GREEDY: 	[1. 2. 1. 1. 0. 0.]store white
+34 VAL ITER: 	[2. 0. 1. 1. 0. 1.]store white
+
+35 GREEDY: 	[1. 2. 1. 1. 2. 0.]store white
+35 VAL ITER: 	[2. 0. 1. 1. 2. 1.]store white
+
+36 GREEDY: 	[1. 2. 1. 1. 2. 2.]restore red
+36 VAL ITER: 	[2. 0. 1. 1. 2. 1.]restore red
+
+37 GREEDY: 	[0. 2. 1. 1. 2. 2.]restore red
+37 VAL ITER: 	[2. 0. 0. 1. 2. 1.]restore red
+
+38 GREEDY: 	[0. 2. 0. 1. 2. 2.]restore red
+38 VAL ITER: 	[2. 0. 0. 1. 2. 0.]restore red
+
+39 GREEDY: 	[0. 2. 0. 0. 2. 2.]store red
+39 VAL ITER: 	[2. 0. 0. 0. 2. 0.]store red
+
+40 GREEDY: 	[1. 2. 0. 0. 2. 2.]restore white
+40 VAL ITER: 	[2. 0. 1. 0. 2. 0.]restore white
+
+41 GREEDY: 	[1. 0. 0. 0. 2. 2.]restore red
+41 VAL ITER: 	[0. 0. 1. 0. 2. 0.]restore red
+
+42 GREEDY: 	[0. 0. 0. 0. 2. 2.]restore white
+42 VAL ITER: 	[0. 0. 0. 0. 2. 0.]restore white
+
+43 GREEDY: 	[0. 0. 0. 0. 0. 2.]store red
+43 VAL ITER: 	[0. 0. 0. 0. 0. 0.]store red
+
+44 GREEDY: 	[1. 0. 0. 0. 0. 2.]store red
+44 VAL ITER: 	[0. 0. 1. 0. 0. 0.]store red
+
+45 GREEDY: 	[1. 1. 0. 0. 0. 2.]store white
+45 VAL ITER: 	[0. 0. 1. 1. 0. 0.]store white
+
+46 GREEDY: 	[1. 1. 2. 0. 0. 2.]store white
+46 VAL ITER: 	[2. 0. 1. 1. 0. 0.]store white
+
+47 GREEDY: 	[1. 1. 2. 2. 0. 2.]store blue
+47 VAL ITER: 	[2. 0. 1. 1. 2. 0.]store blue
+
+48 GREEDY: 	[1. 1. 2. 2. 3. 2.]restore red
+48 VAL ITER: 	[2. 3. 1. 1. 2. 0.]restore red
+
+49 GREEDY: 	[0. 1. 2. 2. 3. 2.]restore red
+49 VAL ITER: 	[2. 3. 0. 1. 2. 0.]restore red
+
+50 GREEDY: 	[0. 0. 2. 2. 3. 2.]restore white
+50 VAL ITER: 	[2. 3. 0. 0. 2. 0.]restore white
+
+51 GREEDY: 	[0. 0. 0. 2. 3. 2.]restore blue
+51 VAL ITER: 	[0. 3. 0. 0. 2. 0.]restore blue
+
+52 GREEDY: 	[0. 0. 0. 2. 0. 2.]restore white
+52 VAL ITER: 	[0. 0. 0. 0. 2. 0.]restore white
+
+53 GREEDY: 	[0. 0. 0. 0. 0. 2.]restore white
+53 VAL ITER: 	[0. 0. 0. 0. 0. 0.]restore white
+
+54 GREEDY: 	[0. 0. 0. 0. 0. 0.]store blue
+54 VAL ITER: 	[0. 0. 0. 0. 0. 0.]store blue
+
+55 GREEDY: 	[3. 0. 0. 0. 0. 0.]store white
+55 VAL ITER: 	[3. 0. 0. 0. 0. 0.]store white
+
+56 GREEDY: 	[3. 2. 0. 0. 0. 0.]store white
+56 VAL ITER: 	[3. 0. 2. 0. 0. 0.]store white
+
+57 GREEDY: 	[3. 2. 2. 0. 0. 0.]restore blue
+57 VAL ITER: 	[3. 0. 2. 0. 2. 0.]restore blue
+
+58 GREEDY: 	[0. 2. 2. 0. 0. 0.]restore white
+58 VAL ITER: 	[0. 0. 2. 0. 2. 0.]restore white
+
+59 GREEDY: 	[0. 0. 2. 0. 0. 0.]restore white
+59 VAL ITER: 	[0. 0. 0. 0. 2. 0.]restore white
+
