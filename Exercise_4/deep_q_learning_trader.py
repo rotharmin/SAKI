@@ -93,14 +93,14 @@ class DeepQLearningTrader(ITrader):
 
     def replay_new(self):
         if len(self.memory) > 1000:
-            minibatch = random.sample(self.memory, 100)
+            minibatch = random.sample(self.memory, self.batch_size)
         else:
             return
         for state, action, reward, next_state in minibatch:
-            target = reward + self.gamma * np.amax(self.model.predict(np.array([next_state]))[0])
-            target_f = self.model.predict(np.array([state]))
-            target_f[0][np.argmax(action)] = target
-            self.model.fit(np.array([state]), target_f, epochs=1, verbose=0)
+            target_qval = reward + self.gamma * np.amax(self.model.predict(np.array([next_state]))[0])
+            target = self.model.predict(np.array([state]))
+            target[0][np.argmax(action)] = target_qval
+            self.model.fit(np.array([state]), target, epochs=1, verbose=0)
 
     def trade(self, portfolio: Portfolio, stock_market_data: StockMarketData) -> List[Order]:
         """
@@ -166,32 +166,39 @@ class DeepQLearningTrader(ITrader):
         
 
         # Store state as experience (memory) and train the neural network only if trade() was called before at least once
-        if self.last_action_a_b is not None:
+        if self.last_action_a_b is not None and self.train_while_trading:
             
-            if(self.last_portfolio_value < portfolio.get_value(stock_market_data)):
-                reward = +10
+            current_portfolio_value = portfolio.get_value(stock_market_data)
+            if(self.last_portfolio_value < current_portfolio_value):
+                reward = (current_portfolio_value / self.last_portfolio_value) * 100
+            elif(self.last_portfolio_value < current_portfolio_value):
+                reward = 0
             else:
-                reward = -10
+                reward = -100
 
             self.memory.append((self.last_state, self.last_action_a_b, reward, state))
 
-            self.replay_new()
+            if len(self.memory) > self.min_size_of_memory_before_training:
+                self.replay_new()
+                #print("finished training minibatch")
            
            #predict state based on old state
-            new_q_val = reward + self.gamma * np.amax(self.model.predict(np.array([self.last_state]))[0])
-            target_f = self.model.predict(state.reshape((1, self.state_size)))
-            target_f[0][np.argmax(self.last_action_a_b)] = new_q_val
-            self.model.fit(state.reshape((1, self.state_size)), target_f, epochs=1, verbose=0)
+            #new_q_val = reward + self.gamma * np.amax(self.model.predict(np.array([self.last_state]))[0])
+            #target_f = self.model.predict(state.reshape((1, self.state_size)))
+            #target_f[0][np.argmax(self.last_action_a_b)] = new_q_val
+            #self.model.fit(state.reshape((1, self.state_size)), target_f, epochs=1, verbose=0)
 
             #print(predicted_action)
         
         # Create actions for current state and decrease epsilon for fewer random actions
-        if ((randint(0, 1000) < self.epsilon*1000) and (self.epsilon > self.epsilon_min)):
+        if ((randint(0, 1000) <= self.epsilon*1000) and (self.epsilon > self.epsilon_min) and self.train_while_trading):
              action = randint(0, self.action_size)
+             print(self.epsilon, "random")
         else:
             # predict action based on the old state
             prediction = self.model.predict(state.reshape((1,self.state_size)))
             action = np.argmax(prediction[0])
+            print(self.epsilon, "predicted")
         if(self.epsilon > self.epsilon_min*self.epsilon_decay):
             self.epsilon = self.epsilon * self.epsilon_decay
         #print(self.epsilon)
