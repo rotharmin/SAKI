@@ -188,17 +188,12 @@ class DeepQLearningTrader(ITrader):
 
             self.memory.append((self.last_state, self.last_action_a_b, reward, state))
 
+            #predict state based on old state
             if len(self.memory) > self.min_size_of_memory_before_training:
                 self.replay_new()
                 #print("finished training minibatch")
            
-           #predict state based on old state
-            #new_q_val = reward + self.gamma * np.amax(self.model.predict(np.array([self.last_state]))[0])
-            #target_f = self.model.predict(state.reshape((1, self.state_size)))
-            #target_f[0][np.argmax(self.last_action_a_b)] = new_q_val
-            #self.model.fit(state.reshape((1, self.state_size)), target_f, epochs=1, verbose=0)
-
-            #print(predicted_action)
+  
         
         # Create actions for current state and decrease epsilon for fewer random actions
         if ((np.random.rand() <= self.epsilon) and (self.epsilon > self.epsilon_min) and self.train_while_trading):
@@ -213,7 +208,7 @@ class DeepQLearningTrader(ITrader):
                 print(self.epsilon, "predicted")
                 print(prediction, action)
         
-        if(self.epsilon > self.epsilon_min*self.epsilon_decay):
+        if(self.epsilon > self.epsilon_min):
             self.epsilon = self.epsilon * self.epsilon_decay
         #print(self.epsilon)
         # Save created state, actions and portfolio value for the next call of trade()
