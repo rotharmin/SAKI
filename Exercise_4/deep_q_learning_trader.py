@@ -51,9 +51,9 @@ class DeepQLearningTrader(ITrader):
         self.epsilon = 1.0
         self.epsilon_decay = 0.999#0.999
         self.epsilon_min = 0.01
-        self.batch_size = 64
-        self.min_size_of_memory_before_training = 1000  # should be way bigger than batch_size, but smaller than memory
-        self.memory = deque(maxlen=2000)
+        self.batch_size = 1#64
+        self.min_size_of_memory_before_training = 1#000  # should be way bigger than batch_size, but smaller than memory
+        self.memory = deque(maxlen=2)#000)
         self.gamma = 0.9
 
 
@@ -95,9 +95,9 @@ class DeepQLearningTrader(ITrader):
         batch = random.sample(self.memory, self.batch_size)
 
         for state, action, reward, next_state in batch:
-            target_qval = reward + self.gamma * np.amax(self.model.predict(next_state))
+            target_qval = reward + self.gamma * np.amax(self.model.predict(next_state)[0])
             target = self.model.predict(state)
-            target[0][np.argmax(action)] = target_qval
+            target[0][action] = target_qval
             self.model.fit(state, target, epochs=1, verbose=0)
 
     def vote_to_int(self, value_of_vote):
@@ -124,7 +124,6 @@ class DeepQLearningTrader(ITrader):
         assert stock_market_data.get_companies() == [Company.A, Company.B]
 
         order_list = []
-        company_list = stock_market_data.get_companies()
         
         # Compute the current state
 
@@ -159,7 +158,7 @@ class DeepQLearningTrader(ITrader):
                  self.vote_to_int(vote_a.value),
                  self.vote_to_int(vote_b.value)]])
 
-        print(self.vote_to_int(vote_a.value), vote_a.value)
+        #print(self.vote_to_int(vote_a.value), vote_a.value)
 
         """
         state = np.array([portfolio.cash,
@@ -177,14 +176,12 @@ class DeepQLearningTrader(ITrader):
         # Store state as experience (memory) and train the neural network only if trade() was called before at least once
         if self.last_action_a_b is not None and self.train_while_trading:
             
-            current_portfolio_value = portfolio.get_value(stock_market_data)
-
             if(self.last_portfolio_value < current_portfolio_value):
                 reward = ((current_portfolio_value / self.last_portfolio_value) * 100)# **2
-            elif(self.last_portfolio_value < current_portfolio_value):
-                reward = 0
-            else:
+            elif(self.last_portfolio_value > current_portfolio_value):
                 reward = -100
+            else:
+                reward = 0
 
             self.memory.append((self.last_state, self.last_action_a_b, reward, state))
 
@@ -196,20 +193,20 @@ class DeepQLearningTrader(ITrader):
   
         
         # Create actions for current state and decrease epsilon for fewer random actions
-        if ((np.random.rand() <= self.epsilon) and (self.epsilon > self.epsilon_min) and self.train_while_trading):
+        if ((np.random.rand() <= self.epsilon) and (self.epsilon >= self.epsilon_min) and self.train_while_trading):
             action = np.random.randint(self.action_size)
-            print(self.epsilon, "random", action)
+            #print(self.epsilon, "random", action)
         else:
             # predict action based on the old state
             #prediction = self.model.predict(state.reshape((1,self.state_size)))
             prediction = self.model.predict(state)
             action = np.argmax(prediction[0])
-            if(self.train_while_trading):
-                print(self.epsilon, "predicted")
-                print(prediction, action)
         
         if(self.epsilon > self.epsilon_min):
             self.epsilon = self.epsilon * self.epsilon_decay
+        if(self.epsilon < self.epsilon_min):
+            print("can this even happen!?")
+            self.epsilon = self.epsilon_min
         #print(self.epsilon)
         # Save created state, actions and portfolio value for the next call of trade()
         self.last_state = state
@@ -246,11 +243,16 @@ class DeepQLearningTrader(ITrader):
             order_list.append(Order(OrderType.SELL, Company.B, amount_to_sell_B))
         elif(action == 5):
             order_list.append(Order(OrderType.SELL, Company.A, amount_to_sell_A)) 
+            # hold B
         elif(action == 6):
+            # hold A
             order_list.append(Order(OrderType.BUY, Company.B, amount_to_buy_B))
         elif(action == 7):
+            # hold A
             order_list.append(Order(OrderType.SELL, Company.B, amount_to_sell_B))
         elif(action == 8):
+            # hold A
+            # hold B
             order_list = order_list
         return order_list
 
