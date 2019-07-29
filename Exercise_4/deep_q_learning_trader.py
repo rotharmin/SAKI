@@ -34,6 +34,7 @@ class DeepQLearningTrader(ITrader):
             load_trained_model: Flag to trigger loading an already trained neural network
             train_while_trading: Flag to trigger on-the-fly training while trading
         """
+
         # Save experts, training mode and name
         super().__init__(color, name)
         assert expert_a is not None and expert_b is not None
@@ -43,31 +44,22 @@ class DeepQLearningTrader(ITrader):
 
         # Parameters for neural network
         self.state_size = 2
-        self.action_size = 9#10
+        self.action_size = 9
         self.hidden_size = 50
 
         # Parameters for deep Q-learning
         self.learning_rate = 0.001
         self.epsilon = 1.0
-        self.epsilon_decay = 0.999#0.999
+        self.epsilon_decay = 0.999
         self.epsilon_min = 0.01
         self.batch_size = 1#64
-        self.min_size_of_memory_before_training = 1#000  # should be way bigger than batch_size, but smaller than memory
-        self.memory = deque(maxlen=2)#000)
+        self.min_size_of_memory_before_training = 5#1000  # should be way bigger than batch_size, but smaller than memory
+        self.memory = deque(maxlen=10)#2000)
         self.gamma = 0.9
-
-
-        # attributs at beggining
-        self.cash_origin = 0
-        self.price_a_origin = 0
-        self.price_b_origin = 0
-        self.last_price_a = 0
-        self.last_price_b = 0
 
         # Attributes necessary to remember our last actions and fill our memory with experiences
         self.last_state = None
-        self.last_action_a_b = None
-        self.last_action_b = None
+        self.last_action = None
         self.last_portfolio_value = None
 
         # Create main model, either as trained model (from file) or as untrained model (from scratch)
@@ -84,6 +76,7 @@ class DeepQLearningTrader(ITrader):
         assert self.model is not None
         self.model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
 
+
     def save_trained_model(self):
         """
         Save the trained neural network under a fixed name specific for this traders.
@@ -91,7 +84,8 @@ class DeepQLearningTrader(ITrader):
         save_keras_sequential(self.model, self.RELATIVE_DATA_DIRECTORY, self.get_name())
         logger.info(f"DQL Trader: Saved trained model")
 
-    def replay_new(self):
+
+    def experience_replay(self):
         batch = random.sample(self.memory, self.batch_size)
 
         for state, action, reward, next_state in batch:
@@ -100,6 +94,7 @@ class DeepQLearningTrader(ITrader):
             target[0][action] = target_qval
             self.model.fit(state, target, epochs=1, verbose=0)
 
+
     def vote_to_int(self, value_of_vote):
         if(value_of_vote == "sell"):
             return -1
@@ -107,6 +102,7 @@ class DeepQLearningTrader(ITrader):
             return 0
         else:
             return 1
+
 
     def trade(self, portfolio: Portfolio, stock_market_data: StockMarketData) -> List[Order]:
         """
@@ -126,94 +122,45 @@ class DeepQLearningTrader(ITrader):
         order_list = []
         
         # Compute the current state
-
         stock_data_a = stock_market_data[Company.A]
         stock_data_b = stock_market_data[Company.B]
-        price_a = stock_market_data.get_most_recent_price(Company.A)
-        price_b = stock_market_data.get_most_recent_price(Company.B)
         vote_a = self.expert_a.vote(stock_data_a)
         vote_b = self.expert_b.vote(stock_data_b)
 
-        sum = portfolio.get_stock(Company.B) + portfolio.get_stock(Company.A)
-        if(sum == 0):
-            ratio_a = 0
-            ratio_b = 0
-        else:
-            ratio_a = portfolio.get_stock(Company.A) / sum
-            ratio_b = portfolio.get_stock(Company.B) / sum
+        state = np.array([[self.vote_to_int(vote_a.value),
+                           self.vote_to_int(vote_b.value)]])
 
-        if self.last_action_a_b is None:
-            #only do at first run
-            self.cash_origin = portfolio.cash
-            self.price_a_origin = price_a
-            self.price_b_origin = price_b
-            self.last_price_a = price_a
-            self.last_price_b = price_b
-        
-        state = np.array([[#portfolio.cash / self.cash_origin,
-                 #ratio_a,
-                 #ratio_b,
-                 #price_a - self.last_price_a,
-                 #price_b - self.last_price_b,
-                 self.vote_to_int(vote_a.value),
-                 self.vote_to_int(vote_b.value)]])
-
-        #print(self.vote_to_int(vote_a.value), vote_a.value)
-
-        """
-        state = np.array([portfolio.cash,
-                 portfolio.get_stock(Company.A),
-                 portfolio.get_stock(Company.B),
-                 price_a,
-                 price_b,
-                 ord(vote_a.value[0]),
-                 ord(vote_b.value[0])])
-        #print(state)
-        """
-
-        
         current_portfolio_value = portfolio.get_value(stock_market_data)
+        
         # Store state as experience (memory) and train the neural network only if trade() was called before at least once
-        if self.last_action_a_b is not None and self.train_while_trading:
+        if self.last_action is not None and self.train_while_trading:
             
             if(self.last_portfolio_value < current_portfolio_value):
-                reward = ((current_portfolio_value / self.last_portfolio_value) * 100)# **2
+                reward = 1#((current_portfolio_value / self.last_portfolio_value)*100)**2
             elif(self.last_portfolio_value > current_portfolio_value):
-                reward = -100
+                reward = -1#00
             else:
                 reward = 0
 
-            self.memory.append((self.last_state, self.last_action_a_b, reward, state))
+            self.memory.append((self.last_state, self.last_action, reward, state))
 
-            #predict state based on old state
+            # predict state based on old state
             if len(self.memory) > self.min_size_of_memory_before_training:
-                self.replay_new()
-                #print("finished training minibatch")
-           
+                self.experience_replay()
   
-        
         # Create actions for current state and decrease epsilon for fewer random actions
         if ((np.random.rand() <= self.epsilon) and (self.epsilon >= self.epsilon_min) and self.train_while_trading):
             action = np.random.randint(self.action_size)
-            #print(self.epsilon, "random", action)
         else:
-            # predict action based on the old state
-            #prediction = self.model.predict(state.reshape((1,self.state_size)))
             prediction = self.model.predict(state)
             action = np.argmax(prediction[0])
         
-        if(self.epsilon > self.epsilon_min):
-            self.epsilon = self.epsilon * self.epsilon_decay
-        if(self.epsilon < self.epsilon_min):
-            print("can this even happen!?")
-            self.epsilon = self.epsilon_min
-        #print(self.epsilon)
+        self.epsilon = max([self.epsilon_min, self.epsilon * self.epsilon_decay])
+
         # Save created state, actions and portfolio value for the next call of trade()
         self.last_state = state
-        self.last_action_a_b = action
+        self.last_action = action
         self.last_portfolio_value = current_portfolio_value
-        self.last_price_a = stock_market_data.get_most_recent_price(Company.A)
-        self.last_price_b = stock_market_data.get_most_recent_price(Company.B)
 
         #convert action to orderlist
         amount_to_sell_A = portfolio.get_stock(Company.A)
@@ -262,7 +209,6 @@ if __name__ == "__main__":
     # Create the training data and testing data
     # Hint: You can crop the training data with training_data.deepcopy_first_n_items(n)
     training_data = StockMarketData([Company.A, Company.B], [Period.TRAINING])
-    #training_data = training_data.deepcopy_first_n_items(50)
     testing_data = StockMarketData([Company.A, Company.B], [Period.TESTING])
 
     # Create the stock exchange and one traders to train the net
