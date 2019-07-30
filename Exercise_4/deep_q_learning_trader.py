@@ -52,9 +52,9 @@ class DeepQLearningTrader(ITrader):
         self.epsilon = 1.0
         self.epsilon_decay = 0.999
         self.epsilon_min = 0.01
-        self.batch_size = 8#1#64
-        self.min_size_of_memory_before_training = 125#5#1000  # should be way bigger than batch_size, but smaller than memory
-        self.memory = deque(maxlen=250)#10)#2000)
+        self.batch_size = 8
+        self.min_size_of_memory_before_training = 125  # should be way bigger than batch_size, but smaller than memory
+        self.memory = deque(maxlen=250)
         self.gamma = 0.9
 
         # Attributes necessary to remember our last actions and fill our memory with experiences
@@ -106,7 +106,7 @@ class DeepQLearningTrader(ITrader):
 
     def get_reward(self, current_portfolio_value: float):
         if(self.last_portfolio_value < current_portfolio_value):
-            reward = 100*(current_portfolio_value / self.last_portfolio_value)
+            reward = 100 * (current_portfolio_value / self.last_portfolio_value)
         elif(self.last_portfolio_value > current_portfolio_value):
             reward = -100
         else:
