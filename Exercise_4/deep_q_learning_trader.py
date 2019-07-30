@@ -52,9 +52,9 @@ class DeepQLearningTrader(ITrader):
         self.epsilon = 1.0
         self.epsilon_decay = 0.999
         self.epsilon_min = 0.01
-        self.batch_size = 1#64
-        self.min_size_of_memory_before_training = 5#1000  # should be way bigger than batch_size, but smaller than memory
-        self.memory = deque(maxlen=10)#2000)
+        self.batch_size = 8#1#64
+        self.min_size_of_memory_before_training = 125#5#1000  # should be way bigger than batch_size, but smaller than memory
+        self.memory = deque(maxlen=250)#10)#2000)
         self.gamma = 0.9
 
         # Attributes necessary to remember our last actions and fill our memory with experiences
@@ -106,9 +106,9 @@ class DeepQLearningTrader(ITrader):
 
     def get_reward(self, current_portfolio_value: float):
         if(self.last_portfolio_value < current_portfolio_value):
-            reward = 1#((current_portfolio_value / self.last_portfolio_value)*100)**2
+            reward = 100*(current_portfolio_value / self.last_portfolio_value)
         elif(self.last_portfolio_value > current_portfolio_value):
-            reward = -1#00
+            reward = -100
         else:
             reward = 0
         return reward
@@ -198,7 +198,7 @@ class DeepQLearningTrader(ITrader):
         
         # Store state as experience (memory) and train the neural network only if trade() was called before at least once
         if self.last_action is not None and self.train_while_trading:
-            reward = self.get_reward(current_portfolio_value)
+            reward = self.get_reward(current_portfolio_value)            
             self.memory.append((self.last_state, self.last_action, reward, state))
 
             if len(self.memory) > self.min_size_of_memory_before_training:
